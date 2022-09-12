@@ -1,0 +1,35 @@
+#Biblioteca Para gerar copias de arquivos
+import shutil
+#Biblioteca para trabalhar com diretorios 
+import os
+#bibliote para trabalhar com diretorios e arquivos 
+from pathlib import PurePath,Path
+#Importando Arquivos de google Drive
+from google.colab import drive
+drive.mount('/content/drive')
+
+# Path dos diretorios
+src = 'Path inicial'
+trg = 'Path de destino'
+#Printando os aquivos dentro dos diretorios
+files = os.listdir(src)
+files_dest = os.listdir(trg)
+
+#Funçao de para copiar os arquivos
+def copiar():
+# Codigo  que gera a copia dos arquivos em outro diretorio
+  for fname in files:
+      shutil.copy2(os.path.join(src,fname), trg)
+copiar()
+
+#funçao para renomar
+def Renomear():
+# Renomendo os arquivos
+  os.renames('Path do arquivo/nome.csv',
+                    'Path do novo arquivo/novo_nome.csv')
+      
+#Deletando os arquivos caso eles já existam    
+for arquivo in trg:
+    if "2022" in arquivo:
+      os.remove(arquivo)
+Renomear
