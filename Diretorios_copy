@@ -1,28 +1,32 @@
-#Biblioteca Para gerar copias de arquivos
+# Biblioteca Para gerar copias de arquivos
 import shutil
-#Biblioteca para trabalhar com diretorios 
+# Biblioteca para trabalhar com diretorios 
 import os
-#bibliote para trabalhar com diretorios e arquivos 
+# Bibliote para trabalhar com diretorios e arquivos 
 from pathlib import PurePath,Path
-#Importando Arquivos de google Drive
+# Importando Arquivos de google Drive
 from google.colab import drive
 drive.mount('/content/drive')
+# Bibliotecas para checar duplicatas  
+from filecmp import cmp as compare
+from itertools import combinations
+from networkx import Graph, connected_components
 
 # Path dos diretorios
 src = 'Path inicial'
 trg = 'Path de destino'
-#Printando os aquivos dentro dos diretorios
+# Printando os aquivos dentro dos diretorios
 files = os.listdir(src)
 files_dest = os.listdir(trg)
 
-#Funçao de para copiar os arquivos
+# Funçao de para copiar os arquivos
 def copiar():
 # Codigo  que gera a copia dos arquivos em outro diretorio
   for fname in files:
       shutil.copy2(os.path.join(src,fname), trg)
 copiar()
 
-#funçao para renomar
+# Funçao para renomar
 def Renomear():
 # Renomendo os arquivos
   os.renames('Path do arquivo/nome.csv',
@@ -32,4 +36,24 @@ def Renomear():
 for arquivo in trg:
     if "2022" in arquivo:
       os.remove(arquivo)
-Renomear
+Renomear()
+
+# Checando duplicatas
+def duplicados( path, extension ):
+    # Recupera lista de arquivos do diretorio
+    # filtrados pela extensão
+    files = [str(p) for p in Path(path).resolve().glob(extension)]
+
+    # Recupera lista de pares duplicados
+    dups = [(f1, f2) for f1, f2 in combinations(files,2) if compare(f1, f2)]
+
+    # Constroi um grafo a partir dos
+    # pares de arquivos duplicados
+    grafo = Graph()
+    grafo.add_edges_from(dups)
+
+    # Retorna lista dos componentes
+    # conectados do grafo (arquivos identicos)
+    return list(connected_components(grafo))
+
+print(duplicados(path='Caminho do arquivo', extension='*.extensão dele'))
